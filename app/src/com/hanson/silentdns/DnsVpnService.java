@@ -33,6 +33,7 @@ public class DnsVpnService extends VpnService implements Runnable {
     public static final String ACTION_START = "com.hanson.silentdns.START";
     public static final String ACTION_STOP = "com.hanson.silentdns.STOP";
     public static final String ACTION_BOOT = "com.hanson.silentdns.BOOT";
+    public static final String ACTION_APPLY = "com.hanson.silentdns.APPLY";
     private static final int FG_ID = 11;
 
     private final android.os.Handler main = new android.os.Handler(android.os.Looper.getMainLooper());
@@ -69,6 +70,12 @@ public class DnsVpnService extends VpnService implements Runnable {
             stopVpn();
             stopSelf();
             return START_NOT_STICKY;
+        }
+        // Switch servers while running: no restart, counters kept
+        if (ACTION_APPLY.equals(action)) {
+            if (running) { noDoh.clear(); startVpn(sp); }
+            else if (!sp.getBoolean(K_ENABLED, false)) stopSelf();
+            return START_STICKY;
         }
         // Explicit start, always-on start (SERVICE_INTERFACE) or sticky restart (null)
         if (action == null || SERVICE_INTERFACE.equals(action)) {

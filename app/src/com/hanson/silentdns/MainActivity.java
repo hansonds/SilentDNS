@@ -90,6 +90,7 @@ public class MainActivity extends Activity {
                 @Override public void onClick(View v) {
                     primary.setText(p[1]);
                     secondary.setText(p[2]);
+                    if (DnsVpnService.running) applyNow(p[0]);
                 }
             });
             LinearLayout.LayoutParams bl = new LinearLayout.LayoutParams(0, dp(46), 1f);
@@ -99,6 +100,27 @@ public class MainActivity extends Activity {
         root.addView(row0, lp());
         root.addView(row1, lp());
         root.addView(row2, lp());
+
+        applyBtn = new Button(this);
+        applyBtn.setText("APPLY NEW DNS");
+        applyBtn.setTextColor(Color.WHITE);
+        applyBtn.setTextSize(15);
+        applyBtn.setTypeface(Typeface.DEFAULT_BOLD);
+        applyBtn.setBackground(round(0xFF1F6FEB, 14));
+        applyBtn.setVisibility(View.GONE);
+        applyBtn.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) { applyNow(null); }
+        });
+        LinearLayout.LayoutParams abl = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(50));
+        abl.topMargin = dp(16);
+        root.addView(applyBtn, abl);
+        android.text.TextWatcher tw = new android.text.TextWatcher() {
+            public void beforeTextChanged(CharSequence c, int a, int b, int d) {}
+            public void onTextChanged(CharSequence c, int a, int b, int d) {}
+            public void afterTextChanged(android.text.Editable e) { updateApply(); }
+        };
+        primary.addTextChangedListener(tw);
+        secondary.addTextChangedListener(tw);
 
         toggle = new Button(this);
         toggle.setTextColor(Color.WHITE);
@@ -222,14 +244,41 @@ public class MainActivity extends Activity {
         }
     }
 
+    private Button applyBtn;
+
+    /** Shows "Apply" only while running and the typed servers differ from the active ones. */
+    private void updateApply() {
+        if (applyBtn == null) return;
+        boolean changed = !primary.getText().toString().trim().equals(sp.getString(DnsVpnService.K_PRIMARY, ""))
+                || !secondary.getText().toString().trim().equals(sp.getString(DnsVpnService.K_SECONDARY, ""));
+        applyBtn.setVisibility(DnsVpnService.running && changed ? View.VISIBLE : View.GONE);
+    }
+
+    /** Switch DNS servers immediately while running (no turn off / on needed). */
+    private void applyNow(String presetName) {
+        String p = primary.getText().toString().trim();
+        String s = secondary.getText().toString().trim();
+        if (!validIp(p)) { primary.setError("Enter a valid IPv4 address"); return; }
+        if (s.length() == 0) { s = p; secondary.setText(s); }
+        if (!validIp(s)) { secondary.setError("Enter a valid IPv4 address"); return; }
+        sp.edit().putString(DnsVpnService.K_PRIMARY, p).putString(DnsVpnService.K_SECONDARY, s).commit();
+        startService(new Intent(this, DnsVpnService.class).setAction(DnsVpnService.ACTION_APPLY));
+        android.view.inputmethod.InputMethodManager im =
+                (android.view.inputmethod.InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        if (im != null) im.hideSoftInputFromWindow(primary.getWindowToken(), 0);
+        Toast.makeText(this, "Now using " + (presetName != null ? presetName : p + " / " + s),
+                Toast.LENGTH_SHORT).show();
+        updateApply();
+        refresh();
+    }
+
     private void later() {
         h.postDelayed(new Runnable() { @Override public void run() { refresh(); } }, 500);
     }
 
     private void refresh() {
         boolean on = DnsVpnService.running;
-        primary.setEnabled(!on);
-        secondary.setEnabled(!on);
+        updateApply();
         toggle.setText(on ? "TURN OFF" : "TURN ON");
         toggle.setBackground(round(on ? 0xFFB62324 : ON, 16));
         status.setText(on
