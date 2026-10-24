@@ -16,9 +16,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
@@ -40,12 +40,17 @@ jobs:
 
       - name: Build and sign
         env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-          KS_PASS: ${{ secrets.KS_PASS }}
-          KS_ALIAS: ${{ secrets.KS_ALIAS }}
+          # Accepted as repository Secrets (preferred) or as Variables
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 || vars.KEYSTORE_BASE64 }}
+          KS_PASS: ${{ secrets.KS_PASS || vars.KS_PASS }}
+          KS_ALIAS: ${{ secrets.KS_ALIAS || vars.KS_ALIAS }}
         run: |
-          if [ -z "$KEYSTORE_BASE64" ]; then echo "::error::Secret KEYSTORE_BASE64 is missing (Settings > Secrets and variables > Actions)"; exit 1; fi
-          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+          for n in KEYSTORE_BASE64 KS_PASS KS_ALIAS; do
+            if [ -n "${!n}" ]; then echo "$n: found"; else echo "::error::$n not found. Add it under Settings > Secrets and variables > Actions > Secrets tab > 'New repository secret' (not Environment secrets)."; MISSING=1; fi
+          done
+          [ -z "$MISSING" ] || exit 1
+          # tolerate spaces / line breaks from copy-paste
+          printf '%s' "$KEYSTORE_BASE64" | tr -d ' \r\n\t' | base64 -d > "$RUNNER_TEMP/release.jks"
           KS="$RUNNER_TEMP/release.jks" bash tools/build.sh
           mv app/build/SilentDNS.apk "SilentDNS-v${{ steps.v.outputs.version }}.apk"
 
