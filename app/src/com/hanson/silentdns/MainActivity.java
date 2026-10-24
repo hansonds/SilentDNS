@@ -1,6 +1,10 @@
 package com.hanson.silentdns;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.os.Build;
+import android.view.WindowInsets;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -131,6 +135,24 @@ public class MainActivity extends Activity {
         sv.setBackgroundColor(BG);
         sv.setFillViewport(true);
         sv.addView(root);
+        // Android 15+ draws apps edge-to-edge: keep content clear of status bar, nav bar and keyboard
+        final int pad = dp(20), padTop = dp(28);
+        final LinearLayout fRoot = root;
+        sv.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+            @Override public WindowInsets onApplyWindowInsets(View v, WindowInsets in) {
+                int l, t, r, btm;
+                if (Build.VERSION.SDK_INT >= 30) {
+                    android.graphics.Insets i = in.getInsets(WindowInsets.Type.systemBars()
+                            | WindowInsets.Type.displayCutout() | WindowInsets.Type.ime());
+                    l = i.left; t = i.top; r = i.right; btm = i.bottom;
+                } else {
+                    l = in.getSystemWindowInsetLeft(); t = in.getSystemWindowInsetTop();
+                    r = in.getSystemWindowInsetRight(); btm = in.getSystemWindowInsetBottom();
+                }
+                fRoot.setPadding(pad + l, padTop + t, pad + r, pad + btm);
+                return in;
+            }
+        });
         setContentView(sv);
     }
 
@@ -154,6 +176,35 @@ public class MainActivity extends Activity {
         if (!validIp(s)) { secondary.setError("Enter a valid IPv4 address"); return; }
         sp.edit().putString(DnsVpnService.K_PRIMARY, p).putString(DnsVpnService.K_SECONDARY, s).apply();
 
+        if (!sp.getBoolean(K_DISCLOSED, false)) { showDisclosure(); return; }
+        askVpn();
+    }
+
+    private static final String K_DISCLOSED = "disclosed_v1";
+
+    /** Prominent disclosure required by Google Play for apps that use VpnService. */
+    private void showDisclosure() {
+        new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Dialog_Alert)
+                .setTitle("How SilentDNS uses VPN")
+                .setMessage("SilentDNS uses Android's VPN feature only to send your phone's DNS lookups "
+                        + "(the website names your apps ask for) to the DNS servers you choose.\n\n"
+                        + "• Only DNS goes through it. All other internet traffic goes out normally.\n"
+                        + "• Lookups are encrypted (HTTPS) when the server supports it.\n"
+                        + "• Nothing is logged, stored, or sent to the developer or anyone else.\n"
+                        + "• No ads, no tracking, no account.\n\n"
+                        + "Tap Agree to continue. Android will then ask for permission to set up the VPN.")
+                .setCancelable(false)
+                .setPositiveButton("Agree", new DialogInterface.OnClickListener() {
+                    @Override public void onClick(DialogInterface d, int w) {
+                        sp.edit().putBoolean(K_DISCLOSED, true).apply();
+                        askVpn();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void askVpn() {
         Intent ask = VpnService.prepare(this);
         if (ask != null) startActivityForResult(ask, REQ_VPN);
         else onActivityResult(REQ_VPN, RESULT_OK, null);

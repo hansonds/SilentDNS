@@ -26,7 +26,8 @@ jobs:
       - name: Install Android SDK parts
         run: |
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
-          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "build-tools;34.0.0" "platforms;android-34" > /dev/null
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "build-tools;36.0.0" "platforms;android-36" > /dev/null
+          curl -sSL -o "$RUNNER_TEMP/bundletool.jar" https://github.com/google/bundletool/releases/download/1.17.2/bundletool-all-1.17.2.jar
 
       - name: Work out version
         id: v
@@ -51,13 +52,17 @@ jobs:
           [ -z "$MISSING" ] || exit 1
           # tolerate spaces / line breaks from copy-paste
           printf '%s' "$KEYSTORE_BASE64" | tr -d ' \r\n\t' | base64 -d > "$RUNNER_TEMP/release.jks"
-          KS="$RUNNER_TEMP/release.jks" bash tools/build.sh
+          KS="$RUNNER_TEMP/release.jks" BUNDLETOOL="$RUNNER_TEMP/bundletool.jar" bash tools/build.sh
           mv app/build/SilentDNS.apk "SilentDNS-v${{ steps.v.outputs.version }}.apk"
+          mv app/build/SilentDNS.aab "SilentDNS-v${{ steps.v.outputs.version }}-playstore.aab"
+          rm -f "$RUNNER_TEMP/release.jks"
 
       - name: Publish release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.v.outputs.version }}
           name: SilentDNS v${{ steps.v.outputs.version }}
-          files: SilentDNS-v${{ steps.v.outputs.version }}.apk
+          files: |
+            SilentDNS-v${{ steps.v.outputs.version }}.apk
+            SilentDNS-v${{ steps.v.outputs.version }}-playstore.aab
           generate_release_notes: true

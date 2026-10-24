@@ -21,6 +21,8 @@ Get the latest APK from the [**Releases**](../../releases/latest) page.
 
 Android 5.0 or newer is required.
 
+Privacy policy: <https://hansonds.github.io/SilentDNS/privacy.html>
+
 ## Install and set up
 
 1. Download `SilentDNS.apk` and open it. Allow *Install unknown apps* if asked.
@@ -49,7 +51,7 @@ SilentDNS uses Android's `VpnService` to create a tunnel that only carries traff
 
 ## Build from source
 
-**On GitHub (automatic):** go to **Actions → Build APK → Run workflow**, enter a version such as `1.3`, and run it. GitHub builds and signs the APK and publishes it as a new Release. Pushing a tag like `v1.3` does the same.
+**On GitHub (automatic):** go to **Actions → Build APK → Run workflow**, enter a version such as `1.3`, and run it. GitHub builds and signs the APK (for sideloading) and the AAB (for Google Play) and publishes both as a new Release. See [`store/PLAY_STORE.md`](store/PLAY_STORE.md) for the Play Store steps. Pushing a tag like `v1.3` does the same.
 
 This needs three repository secrets (**Settings → Secrets and variables → Actions**):
 
@@ -62,5 +64,5 @@ This needs three repository secrets (**Settings → Secrets and variables → Ac
 **On your own computer:** the app has no Gradle setup and no dependencies, only the Android SDK:
 
 ```bash
-KS=my.jks KS_PASS=mypassword KS_ALIAS=mykey tools/build.sh
+KS=my.jks KS_PASS=mypassword KS_ALIAS=mykey BUNDLETOOL=bundletool.jar tools/build.sh
 ```
