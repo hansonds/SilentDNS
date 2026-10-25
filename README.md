@@ -19,7 +19,7 @@
 
 Get the latest APK from the [**Releases**](../../releases/latest) page.
 
-Android 5.0 or newer is required.
+Android 7.0 or newer is required.
 
 Privacy policy: <https://hansonds.github.io/SilentDNS/privacy.html>
 

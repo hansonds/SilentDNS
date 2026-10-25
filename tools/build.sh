@@ -8,7 +8,7 @@ SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:?set ANDROID_HOME}}"
 PLATFORM="${PLATFORM:-36}"
 BT="$SDK/build-tools/${BUILD_TOOLS:-36.0.0}"
 JAR="$SDK/platforms/android-$PLATFORM/android.jar"
-LINK_FLAGS=(-I "$JAR" --manifest AndroidManifest.xml --min-sdk-version 21 --target-sdk-version "$PLATFORM")
+LINK_FLAGS=(-I "$JAR" --manifest AndroidManifest.xml --min-sdk-version 24 --target-sdk-version "$PLATFORM")
 
 rm -rf build && mkdir -p build/gen build/classes
 "$BT/aapt2" compile --dir res -o build/res.zip
@@ -16,7 +16,7 @@ rm -rf build && mkdir -p build/gen build/classes
 
 javac -nowarn -source 8 -target 8 -bootclasspath "$JAR" -d build/classes \
   build/gen/com/hanson/silentdns/R.java src/com/hanson/silentdns/*.java
-"$BT/d8" --min-api 21 --release --lib "$JAR" --output build $(find build/classes -name '*.class')
+"$BT/d8" --min-api 24 --release --lib "$JAR" --output build $(find build/classes -name '*.class')
 
 # ---- APK ----
 cp build/base.apk build/unsigned.apk && (cd build && zip -qj unsigned.apk classes.dex)
