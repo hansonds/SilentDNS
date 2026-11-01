@@ -18,6 +18,7 @@ public class ToggleWidget extends AppWidgetProvider {
 
     /** Redraw every SilentDNS widget with the current on/off state. */
     public static void refresh(Context c) {
+        DnsTile.refresh(c);   // keep the quick settings tile in step too
         try {
             AppWidgetManager m = AppWidgetManager.getInstance(c);
             int[] ids = m.getAppWidgetIds(new ComponentName(c, ToggleWidget.class));

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hanson.silentdns"
     android:versionCode="3"
-    android:versionName="1.6">
+    android:versionName="1.7">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
@@ -52,6 +52,17 @@
             <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/widget_toggle_info" />
         </receiver>
+
+        <service android:name=".DnsTile"
+            android:label="@string/app_name"
+            android:icon="@drawable/tile_icon"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+            <meta-data android:name="android.service.quicksettings.TOGGLEABLE_TILE" android:value="true" />
+        </service>
 
         <receiver android:name=".BootReceiver" android:exported="true">
             <intent-filter>

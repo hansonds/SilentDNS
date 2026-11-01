@@ -12,6 +12,7 @@
 - **Starts after reboot.** Also supports Android's *Always-on VPN* setting.
 - **One-tap presets.** Cloudflare + Google (default), Cloudflare, Google, Quad9, AdGuard.
 - **Home-screen widget.** A 1×1 button that turns SilentDNS on or off with one tap and shows its state.
+- **Quick settings tile.** An on/off button in the pull-down panel, next to Wi-Fi and Bluetooth.
 - **Live counter.** Shows answered, encrypted and failed lookups.
 - **No logs, no tracking.** Nothing about the sites you visit is saved or sent anywhere except to the DNS servers you choose.
 - **Light.** No background polling and no extra libraries. Only DNS goes through the app; all other traffic goes out normally.
