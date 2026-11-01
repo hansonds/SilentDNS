@@ -1,1 +1,5 @@
-<resources><string name="app_name">SilentDNS</string></resources>
+<resources>
+    <string name="app_name">SilentDNS</string>
+    <string name="widget_name">SilentDNS on/off</string>
+    <string name="widget_desc">Tap to turn SilentDNS on or off</string>
+</resources>

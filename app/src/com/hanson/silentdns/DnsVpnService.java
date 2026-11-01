@@ -171,6 +171,7 @@ public class DnsVpnService extends VpnService implements Runnable {
         tp.allowCoreThreadTimeOut(true); // threads exit when idle
         pool = tp;
         running = true;
+        ToggleWidget.refresh(this);
         worker = new Thread(this, "silentdns");
         worker.setDaemon(true);
         worker.start();
@@ -178,6 +179,7 @@ public class DnsVpnService extends VpnService implements Runnable {
 
     private synchronized void stopVpn() {
         running = false;
+        ToggleWidget.refresh(this);
         main.removeCallbacksAndMessages(null);
         leaveForeground();
         getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean(K_ENABLED, false).apply();
@@ -216,6 +218,7 @@ public class DnsVpnService extends VpnService implements Runnable {
     @Override
     public void onDestroy() {
         running = false;
+        ToggleWidget.refresh(this);
         closeTun();
         super.onDestroy();
     }

@@ -202,7 +202,7 @@ public class MainActivity extends Activity {
         askVpn();
     }
 
-    private static final String K_DISCLOSED = "disclosed_v1";
+    static final String K_DISCLOSED = "disclosed_v1";
 
     /** Prominent disclosure required by Google Play for apps that use VpnService. */
     private void showDisclosure() {
