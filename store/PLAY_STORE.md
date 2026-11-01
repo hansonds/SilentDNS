@@ -36,30 +36,33 @@ SilentDNS: Private DNS Changer
 
 **Short description** (max 80)
 ```
-Set custom DNS for your whole phone. Encrypted, no logs, no ads, runs silently.
+Change DNS for your whole phone in one tap. Encrypted, no logs, no ads.
 ```
 
 **Full description** (max 4000)
 ```
-SilentDNS changes the DNS server for your whole phone – on Wi-Fi and mobile data – with one tap. It is tiny, free, and quiet: no ads, no account, no tracking.
+SilentDNS changes the DNS server for your whole phone – on Wi-Fi and mobile data – with one tap. It is tiny, free and quiet: no ads, no account, no tracking.
 
 WHY CHANGE DNS?
-DNS turns website names into addresses. The DNS server your network gives you can be slow, can log every site you visit, and can block or redirect sites. With SilentDNS you pick a faster, more private server instead.
+DNS turns website names into addresses. The DNS server your network gives you can be slow, can log the sites you visit, and can block or redirect sites. With SilentDNS you choose a faster, more private server instead.
 
 FEATURES
 • Primary and secondary DNS – if one doesn't answer, the other is used automatically
 • Encrypted lookups (DNS-over-HTTPS) where the server supports it, so your network can't read or change them
-• One-tap presets: Cloudflare + Google, Cloudflare, Google, Quad9, AdGuard – or type your own
-• Runs quietly in the background until you turn it off in the app
-• Starts again after reboot, and supports Android's Always-on VPN
+• One-tap presets: Cloudflare + Google, Cloudflare, Google, Quad9, AdGuard – or type your own servers
+• Switch servers instantly while it's running
+• Quick settings button – turn it on or off from the pull-down panel, next to Wi-Fi and Bluetooth
+• Home-screen widget – a simple one-tap on/off button
+• Runs quietly in the background, with no notification, until you turn it off
+• Starts again after a restart, and supports Android's Always-on VPN
 • Live counter of answered, encrypted and failed lookups
-• Very small and light: no background polling, no extra libraries
+• Very small and light on battery: no background polling, no extra libraries
 
-PRIVACY
+PRIVACY FIRST
 SilentDNS does not collect, store or share any data. Your lookups go only to the DNS servers you choose. There are no analytics, no ads and no logs. The full source code is public on GitHub.
 
 HOW IT WORKS (VPN USE)
-SilentDNS uses Android's VpnService only to receive your phone's DNS lookups and forward them to your chosen DNS servers. Only DNS goes through it – all other traffic goes directly to the internet, untouched. Android shows a small key icon while it is on; this is normal for any app that changes DNS for the whole phone.
+SilentDNS uses Android's VpnService only to receive your phone's DNS lookups and send them to the DNS servers you chose. Only DNS goes through it – all other internet traffic goes directly to the internet, untouched, so your speed is not affected. Android shows a small key icon while it is on; this is normal for any app that changes DNS for the whole phone.
 
 TIPS
 • If "Private DNS" in your phone's settings is set to a hostname, set it to Off or Automatic, otherwise it overrides SilentDNS.
@@ -169,6 +172,18 @@ Upload to YouTube as **Unlisted** and paste the link.
 ---
 
 ## 7. Updates later
+
+Release notes for 1.7 (paste into the release-notes box):
+```
+<en-US>
+New in 1.7:
+• Quick settings button – turn SilentDNS on or off from the pull-down panel, next to Wi-Fi
+• Home-screen widget – a one-tap on/off button
+• Change DNS servers instantly while running, no need to turn off and on
+• Works on Android 7.0 and newer
+</en-US>
+```
+
 
 1. GitHub → **Actions → Build APK → Run workflow** → new version (e.g. `1.4`).
 2. Download the new `-playstore.aab` from the Release.
