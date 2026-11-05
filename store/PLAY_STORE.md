@@ -128,14 +128,12 @@ You need at least 2 (up to 8). Take them with Power + Volume-down:
   ```
 - Video: use the same screen recording as the VPN declaration below.
 
-**VPN service declaration** (Policy → App content → VpnService):
-- Is VpnService the core functionality of your app? → **Yes**
-- Description:
-  ```
-  SilentDNS is a DNS changer. It uses VpnService to create a local tunnel that carries only DNS queries (routes are limited to two private virtual DNS addresses). Each query is forwarded to the DNS server the user chose, encrypted with DNS-over-HTTPS where the server supports it, and the answer is returned to the device. All other traffic bypasses the tunnel. No user data is collected, logged or shared.
-  ```
-- Does the app collect personal or sensitive user data via VpnService? → **No**
-- Does the app manipulate or redirect other apps' traffic for monetization (ads)? → **No**
+**VPN service declaration** (Policy → App content → VPN service):
+- Is providing a VPN the core functionality of your application? → **No**
+- Which permitted functionality does your app provide? → tick **Network related tool (including remote access)** only
+- Does your app provide a general VPN service directly to users? → **No** (SilentDNS only changes DNS; it does not tunnel traffic to a remote VPN server. General VPN apps must be published from an organization account.)
+- Does your VPN service collect personal and sensitive user data? → **No**
+- Does your app redirect or manipulate user traffic from other apps for monetization? → **No**
 - Prominent disclosure: shown in-app before the VPN is first started ("How SilentDNS uses VPN" dialog, Agree / Cancel).
 - **Video** (upload to YouTube as *Unlisted*, under 90 seconds) – see section 5.
 
