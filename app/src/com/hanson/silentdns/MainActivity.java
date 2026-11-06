@@ -49,8 +49,10 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle b) {
         super.onCreate(b);
         sp = getSharedPreferences(DnsVpnService.PREFS, MODE_PRIVATE);
-        getWindow().setStatusBarColor(BG);
-        getWindow().setNavigationBarColor(BG);
+        // Edge-to-edge on every Android version that supports it (like EdgeToEdge.enable()),
+        // without the colour APIs deprecated in Android 15
+        getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(BG));
+        if (Build.VERSION.SDK_INT >= 30) getWindow().setDecorFitsSystemWindows(false);
 
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
@@ -162,15 +164,12 @@ public class MainActivity extends Activity {
         final LinearLayout fRoot = root;
         sv.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
             @Override public WindowInsets onApplyWindowInsets(View v, WindowInsets in) {
-                int l, t, r, btm;
+                int l = 0, t = 0, r = 0, btm = 0;
                 if (Build.VERSION.SDK_INT >= 30) {
                     android.graphics.Insets i = in.getInsets(WindowInsets.Type.systemBars()
                             | WindowInsets.Type.displayCutout() | WindowInsets.Type.ime());
                     l = i.left; t = i.top; r = i.right; btm = i.bottom;
-                } else {
-                    l = in.getSystemWindowInsetLeft(); t = in.getSystemWindowInsetTop();
-                    r = in.getSystemWindowInsetRight(); btm = in.getSystemWindowInsetBottom();
-                }
+                } // older Android keeps the app below the system bars, so no extra space needed
                 fRoot.setPadding(pad + l, padTop + t, pad + r, pad + btm);
                 return in;
             }
